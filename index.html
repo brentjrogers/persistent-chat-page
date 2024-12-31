@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+  <title>Persistent Chat Page</title>
+	<link rel="stylesheet" href="" type="text/css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .chat-container {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    #messages {
+      border: 1px solid #ccc;
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+    }
+    .message {
+      margin-bottom: 10px;
+    }
+    .timestamp {
+      font-size: 0.8em;
+      color: gray;
+    }
+    form {
+      margin-top: 20px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 1em;
+    }
+    input {
+      width: calc(100% - 120px);
+      margin-right: 10px;
+    }
+    button {
+      width: 100px;
+    }
+  </style>
+</head>
+<body>
+	
+  <div class="chat-container">
+    <h1>Chat Page</h1>
+    <div id="messages"></div>
+    <form id="chatForm">
+      <input type="text" id="username" placeholder="Your Name" required />
+      <input type="text" id="message" placeholder="Your Message" required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    // Load existing messages from localStorage
+    function loadMessages() {
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      const messagesDiv = document.getElementById("messages");
+      messagesDiv.innerHTML = "";
+      messages.forEach(({ name, message, timestamp }) => {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+        messageDiv.innerHTML = `<strong>${name}</strong>: ${message} <span class="timestamp">(${timestamp})</span>`;
+        messagesDiv.appendChild(messageDiv);
+      });
+    }
+
+    // Save a new message to localStorage
+    function saveMessage(name, message) {
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      const timestamp = new Date().toLocaleString();
+      messages.push({ name, message, timestamp });
+      localStorage.setItem("chatMessages", JSON.stringify(messages));
+    }
+
+    // Handle form submission
+    document.getElementById("chatForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("username").value.trim();
+      const message = document.getElementById("message").value.trim();
+
+      if (name && message) {
+        saveMessage(name, message);
+        loadMessages();
+        document.getElementById("message").value = ""; // Clear the message input
+      }
+    });
+
+    // Load messages when the page loads
+    window.onload = loadMessages;
+  </script>
+	
+</body>
+</html>
